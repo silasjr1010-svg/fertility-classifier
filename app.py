@@ -143,9 +143,9 @@ def main():
                             for idx in top_indices:
                                 name = label_map.get(idx, f"Class {idx}").capitalize()
                                 academic_map = {
-                                    "Fertile": "Grade A (Fresh)", 
-                                    "Dead": "Grade C (Defective)", 
-                                    "Infertile": "Unclassified"
+                                    "Fertile": "Fertile", 
+                                    "Dead": "Dead-in-shell", 
+                                    "Infertile": "infertile"
                                 }
                                 display_name = academic_map.get(name, name)
                                 prob = cls_pred[idx]
