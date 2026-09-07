@@ -1,0 +1,18 @@
+{
+  "stage2_accuracy": 0.9984423676012462,
+  "macro_roc_auc": 0.999952688735552,
+  "mean_average_precision": 0.9999107963824502,
+  "per_class_roc_auc": {
+    "dead": 1.0,
+    "fertile": 1.0,
+    "infertile": 0.9998580662066556
+  },
+  "per_class_average_precision": {
+    "dead": 0.9999999999999999,
+    "fertile": 1.0,
+    "infertile": 0.9997323891473505
+  },
+  "mean_inference_latency_ms": 88.73095508999995,
+  "stage1_epochs_run": 20,
+  "stage2_epochs_run": 15
+}
