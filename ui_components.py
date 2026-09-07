@@ -136,19 +136,7 @@ def inject_custom_css():
             100% {{ transform: scale(1); box-shadow: 0 0 0 0 {c['danger']}00; }}
         }}
         
-        /* Login Page Specific */
-        .login-card {{
-            background: {c['card_bg']};
-            padding: 3.5rem;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px {c['shadow']};
-            border: 1px solid {c['shadow']};
-            animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%;
-            margin-top: 15vh;
-        }}
-        
-        /* Input Field Styling */
+        /* Input Field Styling (used outside the login page) */
         div[data-testid="stTextInput"] input {{
             background-color: {c['bg']} !important;
             border: 1px solid {c['shadow']} !important;
@@ -161,11 +149,6 @@ def inject_custom_css():
             font-weight: 600 !important;
             margin-bottom: 0.5rem !important;
             color: {c['text']} !important;
-        }}
-        
-        @keyframes slideInUp {{
-            from {{ opacity: 0; transform: translateY(40px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
         }}
         
         /* Result Cards */
@@ -226,33 +209,185 @@ def inject_custom_css():
     st.markdown(css, unsafe_allow_html=True)
 
 # =========================
-# AUTH SYSTEM (UI)
+# LOGIN PAGE — REDESIGNED
 # =========================
 
+def inject_login_css():
+    """Login-specific design system. Deliberately independent of the
+    light/dark app theme -- the portal has its own identity: a dark
+    "candling room" with a single warm light source, mirroring the
+    literal act of candling an egg (shining light through it to see
+    what's inside) as the visual metaphor for authentication itself.
+    """
+    css = """
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --ink: #14110F;
+            --surface: #221D18;
+            --surface-line: #3A322A;
+            --ember: #E8A33D;
+            --ember-soft: rgba(232, 163, 61, 0.16);
+            --verdigris: #2FA98C;
+            --parchment: #F3ECDF;
+            --ash: #948A7C;
+        }
+
+        [data-testid="stAppViewContainer"],
+        [data-testid="stAppViewContainer"] > .main,
+        html, body {
+            background: radial-gradient(120% 90% at 50% 0%, #241E17 0%, var(--ink) 55%, #0B0906 100%) !important;
+        }
+
+        [data-testid="stHeader"] { background: transparent !important; }
+        [data-testid="stStatusWidget"] { visibility: hidden; }
+
+        .login-shell {
+            max-width: 420px;
+            margin: 9vh auto 0 auto;
+            padding: 3rem 2.75rem 2.75rem;
+            background: var(--surface);
+            border: 1px solid var(--surface-line);
+            border-radius: 18px;
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+            animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .candle-icon { text-align: center; margin-bottom: 1.5rem; }
+        .glow-halo { animation: breathe 4.5s ease-in-out infinite; transform-origin: center; }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.45; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.06); }
+        }
+
+        .login-heading {
+            text-align: center;
+            margin-bottom: 2.25rem;
+        }
+
+        .login-heading h1 {
+            font-family: 'Fraunces', serif !important;
+            font-weight: 600 !important;
+            font-size: 1.75rem !important;
+            color: var(--parchment) !important;
+            margin: 0 0 0.5rem 0 !important;
+            letter-spacing: -0.01em;
+        }
+
+        .login-heading p {
+            font-family: 'Space Grotesk', sans-serif !important;
+            color: var(--ash) !important;
+            font-size: 0.95rem !important;
+            margin: 0 !important;
+            line-height: 1.5;
+        }
+
+        .login-shell label {
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: var(--ash) !important;
+            margin-bottom: 0.35rem !important;
+        }
+
+        .login-shell div[data-testid="stTextInput"] input {
+            font-family: 'Space Grotesk', sans-serif !important;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1.5px solid var(--surface-line) !important;
+            border-radius: 0 !important;
+            padding: 0.6rem 0.1rem !important;
+            color: var(--parchment) !important;
+            font-size: 1rem !important;
+            transition: border-color 0.25s ease;
+        }
+
+        .login-shell div[data-testid="stTextInput"] input:focus {
+            border-bottom-color: var(--ember) !important;
+            box-shadow: none !important;
+        }
+
+        .login-shell div[data-testid="stTextInput"] input::placeholder {
+            color: var(--surface-line) !important;
+        }
+
+        .login-shell .stButton > button {
+            font-family: 'Space Grotesk', sans-serif !important;
+            background: var(--ember) !important;
+            color: #221A0D !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 0.75rem 1.5rem !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            margin-top: 1.75rem !important;
+            transition: filter 0.25s ease, transform 0.25s ease !important;
+            width: 100%;
+        }
+
+        .login-shell .stButton > button:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .login-shell div[data-testid="stForm"] {
+            border: none !important;
+            padding: 0 !important;
+        }
+
+        .login-footnote {
+            text-align: center;
+            margin-top: 1.75rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            color: var(--surface-line);
+        }
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+
 def render_login():
-    inject_custom_css()
-    
-    # Use columns for layout but keep HTML condensed
+    inject_login_css()
+
     _, col, _ = st.columns([1, 2, 1])
-    
+
     with col:
-        # Combine opening tags and header to avoid Streamlit container spacing
-        st.markdown(f"""
-            <div class="login-card">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="font-size: 3.5rem; margin-bottom: 1rem;">🥚</div>
-                    <h1 style="margin: 0; font-weight: 800; font-size: 1.8rem; color: {COLORS[st.session_state.theme]['text']} !important;">System Authentication Portal</h1>
-                    <p style="margin-top: 0.5rem; color: {COLORS[st.session_state.theme]['text_muted']} !important; font-size: 1rem;">Secure Access to Intelligent Poultry Assessment System</p>
+        st.markdown("""
+            <div class="login-shell">
+                <div class="candle-icon">
+                    <svg width="60" height="78" viewBox="0 0 72 92" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="candling-glow" cx="50%" cy="42%" r="65%">
+                                <stop offset="0%" stop-color="#FCD98A"/>
+                                <stop offset="45%" stop-color="#E8A33D"/>
+                                <stop offset="100%" stop-color="#8A5A1E"/>
+                            </radialGradient>
+                        </defs>
+                        <ellipse class="glow-halo" cx="36" cy="48" rx="34" ry="30" fill="#E8A33D" opacity="0.5"/>
+                        <path d="M36 4C22 4 8 34 8 56C8 76 20 88 36 88C52 88 64 76 64 56C64 34 50 4 36 4Z"
+                              fill="url(#candling-glow)" stroke="#3A2410" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <div class="login-heading">
+                    <h1>Egg Quality Portal</h1>
+                    <p>Sign in with your researcher credentials to access the assessment system</p>
                 </div>
         """, unsafe_allow_html=True)
-        
+
         with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("ID", placeholder="Enter researcher identification")
-            password = st.text_input("Credential", type="password", placeholder="••••••••")
-            
-            st.markdown('<div style="margin-top: 1.5rem;"></div>', unsafe_allow_html=True)
-            submit = st.form_submit_button("Authenticate Access", use_container_width=True)
-            
+            username = st.text_input("Researcher ID", placeholder="Enter your researcher ID")
+            password = st.text_input("Password", type="password", placeholder="••••••••")
+
+            submit = st.form_submit_button("Sign in", use_container_width=True)
+
             if submit:
                 try:
                     users = st.secrets["users"]
@@ -267,8 +402,11 @@ def render_login():
                         st.error("Invalid credentials")
                 except Exception as e:
                     st.error("Authentication system error")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("""
+                <div class="login-footnote">Intelligent Poultry Assessment System</div>
+            </div>
+        """, unsafe_allow_html=True)
 
 # =========================
 # LAYOUT COMPONENTS
@@ -306,7 +444,6 @@ def render_status_card(label, value, type="success"):
 def render_result_card(status, confidence):
     status = status.lower().strip()
     
-    # Map ML classes to UI types
     ui_type = "unknown"
     icon = "🔍"
     label = "Diagnostic Analysis Report"
@@ -352,7 +489,6 @@ def render_sidebar_controls():
         
         st.markdown("---")
         
-        # User Profile
         st.markdown(f"""
             <div style="padding: 1rem; background: {COLORS[st.session_state.theme]['bg']}; border-radius: 12px; margin-bottom: 1rem;">
                 <div style="font-size: 0.8rem; font-weight: 700; opacity: 0.6; text-transform: uppercase;">Active Researcher</div>
@@ -361,7 +497,6 @@ def render_sidebar_controls():
             </div>
         """, unsafe_allow_html=True)
         
-        # Theme Toggle
         st.markdown("#### System Configuration Module")
         is_dark = st.session_state.get('theme', 'light') == 'dark'
         if st.toggle("🌙 Enable Dark Mode", value=is_dark):
@@ -375,7 +510,6 @@ def render_sidebar_controls():
                 
         st.markdown("---")
         
-        # Logout Button
         st.markdown('<div class="logout-btn-container">', unsafe_allow_html=True)
         if st.button("🚫 Terminate Session", key="logout", use_container_width=True):
             st.session_state.authenticated = False
@@ -400,7 +534,7 @@ def render_sidebar_controls():
         with st.expander("🧩 Deep Learning Model Configuration Panel", expanded=False):
             st.markdown("""
                 **Architecture:**
-                - Two-stage CNN pipeline: egg detector \u2192 fertility classifier
+                - Two-stage CNN pipeline: egg detector → fertility classifier
                 - Backbone: MobileNetV2 (frozen, ImageNet-pretrained) + CBAM
                   (channel + spatial attention)
                 - Input Vector: [224, 224, 3]
