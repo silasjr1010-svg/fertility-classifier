@@ -443,27 +443,28 @@ def render_status_card(label, value, type="success"):
 
 def render_result_card(status, confidence):
     status = status.lower().strip()
-    
-    ui_type = "unknown"
-    icon = "🔍"
+
     label = "Diagnostic Analysis Report"
-    
-    if "infertile" in status:
-        ui_type = "rotten"
-        icon = "🟡"
-        display_status = "Unclassified Sample (Requires Further Review)"
-    elif "fertile" in status or "fresh" in status:
+
+    # Matches the real trained classes in label_mapping.json exactly:
+    # {"dead": 0, "fertile": 1, "infertile": 2}
+    if status == "fertile":
         ui_type = "fresh"
-        icon = "✨"
-        display_status = "Grade A (Fresh Egg – High Quality)"
-    elif "dead" in status or "rotten" in status:
+        icon = "🐣"
+        display_status = "Fertile"
+    elif status == "infertile":
+        ui_type = "unknown"
+        icon = "⚪"
+        display_status = "Infertile"
+    elif status == "dead":
         ui_type = "rotten"
         icon = "⚠️"
-        display_status = "Grade C (Defective Egg – Unfit for Consumption)"
+        display_status = "Dead-in-Shell"
     else:
+        ui_type = "unknown"
         icon = "🔍"
         display_status = "Unclassified Sample (Requires Further Review)"
-        
+
     st.markdown(f"""
         <div class="result-card {ui_type}">
             <div class="result-title">{label}</div>
